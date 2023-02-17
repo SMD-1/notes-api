@@ -2,7 +2,9 @@ import express from "express";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import 'dotenv/config';
+
 import userRoutes from './routes/user.js';
+import notesRoute from './routes/notes.js'
 
 const app = express();
 const PORT = 4001;
@@ -36,6 +38,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(morgan('common'));
 app.use("/user", userRoutes);
+app.use("/notes", notesRoute);
 
 app.get("/", (_, res) => {
     res.send("index route");
