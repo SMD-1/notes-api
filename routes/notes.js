@@ -62,4 +62,37 @@ router.post("/", fileUpload(), async (req, res) => {
 
   //     })
 });
+
+router.get("/", async (req, res) => {
+  try {
+    const result = await Notes.find();
+    // console.log(result);
+    res.status(200).json({
+      status: "success",
+      data: result,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: "fail",
+      message: err,
+    });
+  }
+});
+router.get("/:fileId", async (req, res) => {
+  const { fileId } = req.params;
+  try {
+    const file = await Notes.findById(fileId);
+    res.status(200).json({
+      status: "success",
+      data: file,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "fail",
+      message: err,
+    });
+    console.log(err);
+  }
+});
 export default router;
