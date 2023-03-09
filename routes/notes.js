@@ -9,16 +9,18 @@ router.post("/", fileUpload(), async (req, res) => {
   console.log("naiceee");
   if (!req.files) return res.status(400).json({ message: "file not uploaded" });
   console.log(req.files); //{...}
-  //   { noteFile: {...}, thumbnailImage: {...}}
+  // { noteFile: {...}, thumbnailImage: {...}}
   try {
+    // upload to imgkit
     const uploadResult = await imagekit.upload({
       file: req.files.noteFile.data,
       fileName: req.files.noteFile.name,
       folder: "Notes",
     });
 
+    // upload thumbnail if sent
     let thumbnailResult;
-    if (req.files.thumbnailImage)
+    if (req.files.thumbnailImage) {
       thumbnailResult = await imagekit.upload({
         file: req.files.thumbnailImage.data,
         fileName: `thumbnail-${req.files.noteFile.name.split(".")[0]}.${
@@ -26,11 +28,14 @@ router.post("/", fileUpload(), async (req, res) => {
         }`,
         folder: "Notes/thumb",
       });
+    }
+    // save to db
+    console.log(req.body);
     const fileToSave = {
+      user: req.body.user,
       title: req.body.title,
       subject: req.body.subject,
       description: req.body.description,
-      author: req.body.userId,
       size: req.files.noteFile.size,
       url: uploadResult.url,
       thumbnail: thumbnailResult?.url || "not provided",
@@ -38,6 +43,7 @@ router.post("/", fileUpload(), async (req, res) => {
     const file = new Notes(fileToSave);
     const savedFile = await file.save();
     console.log(savedFile);
+    // send saved doc back as res
     res.status(200).json({
       status: "success",
       data: {
@@ -65,8 +71,10 @@ router.post("/", fileUpload(), async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const result = await Notes.find();
-    // console.log(result);
+    const result = await Notes.find().populate(
+      "user",
+      "fullName username -_id"
+    );
     res.status(200).json({
       status: "success",
       data: result,
@@ -95,4 +103,5 @@ router.get("/:fileId", async (req, res) => {
     console.log(err);
   }
 });
+
 export default router;

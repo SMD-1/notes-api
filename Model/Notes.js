@@ -1,34 +1,34 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const notesSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     title: {
-        type: String,
-        required: true,
-        default: ""
+      type: String,
+      required: true,
+      default: "",
     },
     subject: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     size: {
-        type: Number
+      type: Number,
     },
     url: {
-        type: String
+      type: String,
     },
     description: {
-        type: String
+      type: String,
     },
     thumbnail: {
-        type: String
+      type: String,
     },
-    author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'User'     
-    }
-    
-},
-    {timestamps: true}
+  },
+  { timestamps: true }
 );
 
-export default mongoose.model("notes", userSchema);
+export default mongoose.model("notes", notesSchema);
