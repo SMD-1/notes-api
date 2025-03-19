@@ -7,7 +7,7 @@ import userRoutes from "./routes/user.js";
 import notesRoute from "./routes/notes.js";
 
 const app = express();
-const PORT = 4001;
+const PORT = 4000;
 
 mongoose.set("strictQuery", false);
 mongoose.connect(process.env.MONGODB_URL, (err) => {
